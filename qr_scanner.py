@@ -3,6 +3,13 @@ import numpy as np
 from pyzbar.pyzbar import decode
 import requests
 import time
+import sys
+import locale
+
+# Устанавливаем кодировку для консоли
+sys.stdout.reconfigure(encoding='utf-8')
+# или
+# locale.setlocale(locale.LC_ALL, 'ru_RU.UTF-8')
 
 def get_camera_url():
     # IP адрес ESP32-CAM (замените на ваш)
@@ -55,27 +62,27 @@ def main():
     
     while True:
         try:
-            # Получаем изображение напрямую через requests
             response = requests.get(url)
             if response.status_code == 200:
-                # Преобразуем изображение из байтов в массив numpy
                 image_array = np.frombuffer(response.content, dtype=np.uint8)
                 frame = cv2.imdecode(image_array, cv2.IMREAD_COLOR)
                 
                 if frame is not None:
+                    # Убедимся, что кадр имеет нужное разрешение
+                    frame = cv2.resize(frame, (800, 600))
+                    
                     # Обработка QR-кода
                     x, y, data = process_qr(frame)
                     
                     # Отображение кадра
                     cv2.imshow("QR Scanner", frame)
             
-            # Задержка между кадрами
             if cv2.waitKey(1) & 0xFF == ord('q'):
                 break
                 
         except Exception as e:
             print(f"Ошибка при получении кадра: {e}")
-            time.sleep(1)  # Пауза перед следующей попыткой
+            time.sleep(1)
     
     cv2.destroyAllWindows()
 

@@ -48,16 +48,10 @@ void setup() {
   config.xclk_freq_hz = 20000000;
   config.pixel_format = PIXFORMAT_JPEG;
 
-  // Если RAM больше 2MB, используем более высокое разрешение
-  if(psramFound()){
-    config.frame_size = FRAMESIZE_UXGA;
-    config.jpeg_quality = 10;
-    config.fb_count = 2;
-  } else {
-    config.frame_size = FRAMESIZE_SVGA;
-    config.jpeg_quality = 12;
-    config.fb_count = 1;
-  }
+  // Изменяем настройки разрешения и качества
+  config.frame_size = FRAMESIZE_SVGA; // Устанавливаем SVGA (800x600)
+  config.jpeg_quality = 10;           // Качество JPEG (0-63, чем меньше тем лучше)
+  config.fb_count = 2;
 
 #if defined(CAMERA_MODEL_ESP_EYE)
   pinMode(13, INPUT_PULLUP);
